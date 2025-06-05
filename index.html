@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HydroStats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+      overflow-x: hidden;
+      height: 100%;
+      overscroll-behavior: none;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+      overscroll-behavior: none;
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .stats-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .version-block {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .version-block:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .version-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .version-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin: 0;
+    }
+
+    .version-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .version-date {
+      font-size: 0.85rem;
+      color: #64748b;
+      background: rgba(51, 65, 85, 0.5);
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+    }
+
+    .total-downloads {
+      font-size: 1rem;
+      color: #3b82f6;
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      display: none;
+    }
+
+    th {
+      background: rgba(51, 65, 85, 0.8);
+      color: #f1f5f9;
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      text-align: left;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+      transition: background-color 0.2s ease;
+    }
+
+    tr:hover td {
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .asset-name {
+      font-weight: 500;
+      color: #f8fafc;
+    }
+
+    .download-count {
+      font-weight: 600;
+      color: #22d3ee;
+    }
+
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 50vh;
+      gap: 1rem;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(59, 130, 246, 0.2);
+      border-top: 3px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      font-size: 1.1rem;
+      color: #94a3b8;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 3rem;
+      gap: 1rem;
+    }
+
+    .tab-button {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      color: #94a3b8;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .tab-button.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+      color: #3b82f6;
+    }
+
+    .tab-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .leaderboard-section {
+      margin-bottom: 4rem;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(6, 182, 212, 0.1) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      margin-bottom: 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    .hero-description {
+      font-size: 1.1rem;
+      color: #cbd5e1;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat-item {
+      text-align: center;
+    }
+
+    .hero-stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-stat-label {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .overview-section {
+      margin-bottom: 4rem;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .overview-card {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .overview-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+    }
+
+    .overview-icon {
+      font-size: 2.5rem;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 12px;
+    }
+
+    .overview-content h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 0.5rem;
+    }
+
+    .overview-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 0.25rem;
+    }
+
+    .overview-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .activity-section {
+      margin-bottom: 4rem;
+    }
+
+    .activity-timeline {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.2);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .activity-time {
+      font-size: 0.75rem;
+      color: #64748b;
+      background: rgba(51, 65, 85, 0.5);
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    .activity-loading {
+      text-align: center;
+      color: #94a3b8;
+      font-style: italic;
+      padding: 2rem;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      margin: 0.5rem 0;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .leaderboard-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .leaderboard-rank {
+      font-size: 1.5rem;
+      font-weight: 700;
+      width: 3rem;
+      text-align: center;
+      color: #94a3b8;
+    }
+
+    .leaderboard-rank.first {
+      color: #fbbf24;
+    }
+
+    .leaderboard-rank.second {
+      color: #94a3b8;
+    }
+
+    .leaderboard-rank.third {
+      color: #cd7c2f;
+    }
+
+    .leaderboard-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    .leaderboard-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .leaderboard-downloads {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #3b82f6;
+      background: rgba(59, 130, 246, 0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+    }
+
+    .leaderboard-loading {
+      text-align: center;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      background: rgba(59, 130, 246, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .back-button:hover {
+      background: rgba(59, 130, 246, 1);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .back-button.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+    }
+
+    .chart-container {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem 0;
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+    }
+
+    .chart-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+
+    .chart-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 400px;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .back-button {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-section {
+        padding: 2rem 1.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .hero-stats {
+        gap: 1.5rem;
+        flex-direction: column;
+      }
+
+      .hero-stat-number {
+        font-size: 2rem;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .overview-card {
+        padding: 1.5rem;
+        gap: 1rem;
+      }
+
+      .version-block {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1rem;
+      }
+
+      .version-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .version-info {
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      th, td {
+        padding: 0.75rem 1rem;
+      }
+
+      .stats-overview {
+        grid-template-columns: 1fr;
+      }
+
+      .activity-timeline {
+        padding: 1.5rem;
+      }
+
+      .activity-item {
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button hidden" id="backButton" onclick="goHome()">
+    <span>←</span>
+    <span>Home</span>
+  </button>
+
+  <div class="container">
+    <div class="tab-content active" id="home-tab">
+      <div class="hero-section">
+        <div class="hero-content">
+          <h2 class="hero-title">Welcome to HydroStats</h2>
+          <p class="hero-description">Your comprehensive analytics dashboard for tracking download statistics across all UI development projects. Monitor performance, analyze trends, and celebrate milestones.</p>
+          <div class="hero-stats">
+            <div class="hero-stat-item">
+              <div class="hero-stat-number" id="totalProjects">8</div>
+              <div class="hero-stat-label">Active Projects</div>
+            </div>
+            <div class="hero-stat-item">
+              <div class="hero-stat-number" id="globalTotalDownloads">-</div>
+              <div class="hero-stat-label">Total Downloads</div>
+            </div>
+            <div class="hero-stat-item">
+              <div class="hero-stat-number" id="globalTotalReleases">-</div>
+              <div class="hero-stat-label">Total Releases</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-section">
+        <h2 class="section-title">📊 Global Overview</h2>
+        <div class="overview-grid">
+          <div class="overview-card">
+            <div class="overview-icon">🚀</div>
+            <div class="overview-content">
+              <h3>Most Active</h3>
+              <p class="overview-number" id="mostActiveProject">-</p>
+              <p class="overview-desc">Project with most releases</p>
+            </div>
+          </div>
+          <div class="overview-card">
+            <div class="overview-icon">⭐</div>
+            <div class="overview-content">
+              <h3>Top Performer</h3>
+              <p class="overview-number" id="topPerformer">-</p>
+              <p class="overview-desc">Highest download count</p>
+            </div>
+          </div>
+          <div class="overview-card">
+            <div class="overview-icon">📅</div>
+            <div class="overview-content">
+              <h3>Latest Release</h3>
+              <p class="overview-number" id="latestRelease">-</p>
+              <p class="overview-desc">Most recent update</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="leaderboard-section">
+        <h2 class="section-title">Active Projects</h2>
+        <div id="leaderboard">
+          <div class="leaderboard-loading">Loading leaderboard data...</div>
+        </div>
+      </div>
+
+      <div class="activity-section">
+        <h2 class="section-title">🔄 Recent Activity</h2>
+        <div class="activity-timeline" id="recentActivity">
+          <div class="activity-loading">Loading recent activity...</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="tab-content" id="nitrogen-tab">
+      <div class="stats-overview" id="nitrogenStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="nitrogenTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="nitrogenTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="nitrogenLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="nitrogenChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="nitrogenChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="nitrogenLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Nitrogen release data...</div>
+      </div>
+      
+      <div id="nitrogenContainer"></div>
+    </div>
+
+    <div class="tab-content" id="tritium-tab">
+      <h1>Tritium Analytics</h1>
+      <div class="stats-overview" id="tritiumStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="tritiumTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="tritiumTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="tritiumLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="tritiumChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="tritiumChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="tritiumLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Tritium release data...</div>
+      </div>
+      
+      <div id="tritiumContainer"></div>
+    </div>
+
+    <div class="tab-content" id="comet-tab">
+      <h1>Comet Analytics</h1>
+      <div class="stats-overview" id="cometStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="cometTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="cometTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="cometLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="cometChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="cometChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="cometLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Comet release data...</div>
+      </div>
+      
+      <div id="cometContainer"></div>
+    </div>
+
+    <div class="tab-content" id="nocturnal-tab">
+      <h1>Nocturnal Analytics</h1>
+      <div class="stats-overview" id="nocturnalStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="nocturnalTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="nocturnalTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="nocturnalLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="nocturnalChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="nocturnalChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="nocturnalLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Nocturnal release data...</div>
+      </div>
+      
+      <div id="nocturnalContainer"></div>
+    </div>
+
+    <div class="tab-content" id="rustrogen-tab">
+      <h1>Rustrogen Analytics</h1>
+      <div class="stats-overview" id="rustrogenStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="rustrogenTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="rustrogenTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="rustrogenLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="rustrogenChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="rustrogenChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="rustrogenLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Rustrogen release data...</div>
+      </div>
+      
+      <div id="rustrogenContainer"></div>
+    </div>
+
+    <div class="tab-content" id="prism-tab">
+      <h1>Prism Analytics</h1>
+      <div class="stats-overview" id="prismStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="prismTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="prismTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="prismLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="prismChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="prismChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="prismLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Prism release data...</div>
+      </div>
+      
+      <div id="prismContainer"></div>
+    </div>
+
+    <div class="tab-content" id="7sploit-tab">
+      <h1>7Sploit Analytics</h1>
+      <div class="stats-overview" id="7sploitStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="7sploitTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="7sploitTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="7sploitLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="7sploitChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="7sploitChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="7sploitLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading 7Sploit release data...</div>
+      </div>
+      
+      <div id="7sploitContainer"></div>
+    </div>
+
+    <div class="tab-content" id="nova-tab">
+      <h1>Nova Analytics</h1>
+      <div class="stats-overview" id="novaStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="novaTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="novaTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="novaLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="novaChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="novaChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="novaLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Nova release data...</div>
+      </div>
+      
+      <div id="novaContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    const repos = {
+      nitrogen: { name: "Nitrogen", repo: "jadxv/nitrogen", desc: "Advanced UI framework for modern applications" },
+      tritium: { name: "Tritium", repo: "phantom8015/Tritium", desc: "Lightweight and fast UI toolkit" },
+      comet: { name: "Comet", repo: "FrozenProductions/Comet", desc: "Blazing fast UI components library" },
+      nocturnal: { name: "Nocturnal", repo: "sillyconvicted/nocturnalui", desc: "Dark-themed UI framework" },
+      rustrogen: { name: "Rustrogen", repo: "Bisher-Almasri/rustrogen", desc: "Rust-powered UI development kit" },
+      prism: { name: "Prism", repo: "Bisher-Almasri/prism", desc: "Colorful and vibrant UI library" },
+      "7sploit": { name: "7Sploit", repo: "OutlawedDev/7sploit", desc: "Security-focused UI toolkit" },
+      nova: { name: "Nova", repo: "OutlawedDev/NovaUI12", desc: "Next-generation UI framework" }
+    };
+    
+    let currentTab = 'home';
+    let leaderboardData = {};
+    let globalStats = {
+      totalDownloads: 0,
+      totalReleases: 0,
+      activeProjects: 0
+    };
+
+    function updateURL(tab) {
+      if (tab === 'home') {
+        window.history.pushState({tab: 'home'}, '', window.location.pathname);
+      } else {
+        window.history.pushState({tab: tab}, '', `?tab=${tab}`);
+      }
+    }
+
+    function getTabFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('tab') || 'home';
+    }
+
+    function updateBackButton() {
+      const backButton = document.getElementById('backButton');
+      if (currentTab === 'home') {
+        backButton.classList.add('hidden');
+      } else {
+        backButton.classList.remove('hidden');
+      }
+    }
+
+    function goHome() {
+      switchTab('home');
+    }
+
+    window.addEventListener('popstate', function(event) {
+      const tab = event.state?.tab || getTabFromURL();
+      switchTab(tab, false);
+    });
+
+    async function fetchJSON(url) {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error("Failed to fetch:", url);
+        return null;
+      }
+      return await response.json();
+    }
+
+    function updateGlobalStats() {
+      const totalDownloads = Object.values(leaderboardData).reduce((sum, data) => sum + data.totalDownloads, 0);
+      const totalReleases = Object.values(leaderboardData).reduce((sum, data) => sum + data.totalReleases, 0);
+      const activeProjects = Object.keys(leaderboardData).length;
+      
+      document.getElementById('globalTotalDownloads').textContent = totalDownloads.toLocaleString();
+      document.getElementById('globalTotalReleases').textContent = totalReleases.toLocaleString();
+      
+      const mostActive = Object.entries(leaderboardData)
+        .sort((a, b) => b[1].totalReleases - a[1].totalReleases)[0];
+      if (mostActive) {
+        document.getElementById('mostActiveProject').textContent = repos[mostActive[0]]?.name || mostActive[0];
+      }
+      
+      const topPerformer = Object.entries(leaderboardData)
+        .sort((a, b) => b[1].totalDownloads - a[1].totalDownloads)[0];
+      if (topPerformer) {
+        document.getElementById('topPerformer').textContent = repos[topPerformer[0]]?.name || topPerformer[0];
+      }
+      
+      const latestRelease = Object.entries(leaderboardData)
+        .filter(([_, data]) => data.latestReleaseDate)
+        .sort((a, b) => new Date(b[1].latestReleaseDate) - new Date(a[1].latestReleaseDate))[0];
+      if (latestRelease) {
+        const projectName = repos[latestRelease[0]]?.name || latestRelease[0];
+        document.getElementById('latestRelease').textContent = projectName;
+      }
+    }
+
+    function updateRecentActivity() {
+      const activities = Object.entries(leaderboardData)
+        .filter(([_, data]) => data.latestReleaseDate)
+        .sort((a, b) => new Date(b[1].latestReleaseDate) - new Date(a[1].latestReleaseDate))
+        .slice(0, 5);
+      
+      const activityContainer = document.getElementById('recentActivity');
+      
+      if (activities.length === 0) {
+        activityContainer.innerHTML = '<div class="activity-loading">Loading recent activity...</div>';
+        return;
+      }
+      
+      activityContainer.innerHTML = activities.map(([repoKey, data], index) => {
+        const repoInfo = repos[repoKey];
+        const timeAgo = getTimeAgo(new Date(data.latestReleaseDate));
+        
+        return `
+          <div class="activity-item fade-in" style="animation-delay: ${index * 0.1}s;">
+            <div class="activity-icon">🚀</div>
+            <div class="activity-content">
+              <div class="activity-title">${repoInfo.name} released ${data.latestVersion}</div>
+              <div class="activity-desc">New version with latest features and improvements</div>
+            </div>
+            <div class="activity-time">${timeAgo}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getTimeAgo(date) {
+      const now = new Date();
+      const diff = now - date;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      
+      if (days === 0) return 'Today';
+      if (days === 1) return '1 day ago';
+      if (days < 7) return `${days} days ago`;
+      if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+      if (days < 365) return `${Math.floor(days / 30)} months ago`;
+      return `${Math.floor(days / 365)} years ago`;
+    }
+
+    function updateLeaderboard() {
+      const leaderboard = document.getElementById('leaderboard');
+      const entries = Object.entries(leaderboardData)
+        .filter(([_, data]) => data.totalDownloads > 0)
+        .sort((a, b) => b[1].totalDownloads - a[1].totalDownloads);
+
+      if (entries.length === 0) {
+        leaderboard.innerHTML = '<div class="leaderboard-loading">Loading leaderboard data...</div>';
+        return;
+      }
+
+      leaderboard.innerHTML = entries.map(([repoKey, data], index) => {
+        const rank = index + 1;
+        const rankClass = rank === 1 ? 'first' : rank === 2 ? 'second' : rank === 3 ? 'third' : '';
+        const repoName = repos[repoKey]?.name || repoKey.charAt(0).toUpperCase() + repoKey.slice(1);
+        
+        return `
+          <div class="leaderboard-item fade-in" style="animation-delay: ${index * 0.1}s; cursor: pointer;" onclick="switchTab('${repoKey}')" title="Click to view ${repoName} details">
+            <div class="leaderboard-rank ${rankClass}">${rank}</div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">${repoName}</div>
+            </div>
+            <div class="leaderboard-downloads">${data.totalDownloads.toLocaleString()}</div>
+          </div>
+        `;
+      }).join('');
+      
+      updateGlobalStats();
+      updateRecentActivity();
+    }
+
+    function switchTab(tab, updateHistory = true) {
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(`${tab}-tab`).classList.add('active');
+      
+      currentTab = tab;
+      
+      if (updateHistory) {
+        updateURL(tab);
+      }
+      updateBackButton();
+      
+      if (tab === 'nitrogen' && !document.getElementById('nitrogenContainer').hasChildNodes()) {
+        loadReleases('nitrogen');
+      } else if (tab === 'tritium' && !document.getElementById('tritiumContainer').hasChildNodes()) {
+        loadReleases('tritium');
+      } else if (tab === 'comet' && !document.getElementById('cometContainer').hasChildNodes()) {
+        loadReleases('comet');
+      } else if (tab === 'nocturnal' && !document.getElementById('nocturnalContainer').hasChildNodes()) {
+        loadReleases('nocturnal');
+      } else if (tab === 'rustrogen' && !document.getElementById('rustrogenContainer').hasChildNodes()) {
+        loadReleases('rustrogen');
+      } else if (tab === 'prism' && !document.getElementById('prismContainer').hasChildNodes()) {
+        loadReleases('prism');
+      } else if (tab === '7sploit' && !document.getElementById('7sploitContainer').hasChildNodes()) {
+        loadReleases('7sploit');
+      } else if (tab === 'nova' && !document.getElementById('novaContainer').hasChildNodes()) {
+        loadReleases('nova');
+      }
+    }
+
+    function createPopularityChart(repoKey, releases) {
+      const chartContainer = document.getElementById(`${repoKey}ChartContainer`);
+      const canvas = document.getElementById(`${repoKey}Chart`);
+      
+      if (!canvas || !releases || releases.length === 0) {
+        return;
+      }
+
+      const chartData = releases
+        .map(release => ({
+          version: release.tag_name,
+          downloads: release.assets.reduce((sum, asset) => sum + asset.download_count, 0),
+          date: new Date(release.published_at)
+        }))
+        .sort((a, b) => a.date - b.date);
+
+      let cumulativeDownloads = 0;
+      const cumulativeData = chartData.map(item => {
+        cumulativeDownloads += item.downloads;
+        return {
+          ...item,
+          cumulativeDownloads: cumulativeDownloads
+        };
+      }); 
+
+      const labels = cumulativeData.map(item => item.version);
+      const downloadData = cumulativeData.map(item => item.cumulativeDownloads);
+
+      const ctx = canvas.getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+      gradient.addColorStop(0.5, 'rgba(139, 92, 246, 0.6)');
+      gradient.addColorStop(1, 'rgba(6, 182, 212, 0.4)');
+
+      const borderGradient = ctx.createLinearGradient(0, 0, 0, 400);
+      borderGradient.addColorStop(0, '#3b82f6');
+      borderGradient.addColorStop(0.5, '#8b5cf6');
+      borderGradient.addColorStop(1, '#06b6d4');
+
+      const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Downloads',
+            data: downloadData,
+            backgroundColor: gradient,
+            borderColor: borderGradient,
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointHoverBackgroundColor: '#8b5cf6',
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.9)',
+              borderColor: 'rgba(59, 130, 246, 0.5)',
+              borderWidth: 1,
+              titleColor: '#f8fafc',
+              bodyColor: '#f8fafc',
+              cornerRadius: 8,
+              displayColors: false,
+              callbacks: {
+                title: function(context) {
+                  return `Version ${context[0].label}`;
+                },
+                label: function(context) {
+                  const currentIndex = context.dataIndex;
+                  const currentTotal = context.parsed.y;
+                  const previousTotal = currentIndex > 0 ? downloadData[currentIndex - 1] : 0;
+                  const versionDownloads = currentTotal - previousTotal;
+                  
+                  return [
+                    `Total Downloads: ${currentTotal.toLocaleString()}`,
+                    `This Version: ${versionDownloads.toLocaleString()}`
+                  ];
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: 'rgba(51, 65, 85, 0.3)',
+                borderColor: 'rgba(51, 65, 85, 0.5)'
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: {
+                  family: 'Inter',
+                  size: 12
+                },
+                maxRotation: 45,
+                maxTicksLimit: Math.min(labels.length, 20) 
+              },
+              border: {
+                color: 'rgba(51, 65, 85, 0.5)'
+              }
+            },
+            y: {
+              min: 0,
+              grid: {
+                color: 'rgba(51, 65, 85, 0.3)',
+                borderColor: 'rgba(51, 65, 85, 0.5)'
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: {
+                  family: 'Inter',
+                  size: 12
+                },
+                callback: function(value) {
+                  return value.toLocaleString();
+                }
+              },
+              border: {
+                color: 'rgba(51, 65, 85, 0.5)'
+              }
+            }
+          },
+          elements: {
+            point: {
+              hoverBackgroundColor: '#8b5cf6'
+            }
+          }
+        }
+      });
+
+      chartContainer.style.display = 'block';
+      return chart;
+    }
+
+    async function loadReleases(repoKey) {
+      const repoInfo = repos[repoKey];
+      const repo = repoInfo.repo;
+      const container = document.getElementById(`${repoKey}Container`);
+      const loading = document.getElementById(`${repoKey}Loading`);
+      const statsOverview = document.getElementById(`${repoKey}StatsOverview`);
+
+      const releases = await fetchJSON(`https://api.github.com/repos/${repo}/releases`);
+      if (!releases) {
+        loading.innerHTML = `
+          <div class="error-message">
+            <h3>Failed to load release data</h3>
+            <p>Unable to fetch data from GitHub API. Please try again later.</p>
+          </div>
+        `;
+        return;
+      }
+
+      releases.sort((a, b) => {
+        return new Date(b.published_at) - new Date(a.published_at);
+      });
+
+      const totalDownloads = releases.reduce((total, release) => {
+        return total + release.assets.reduce((sum, asset) => sum + asset.download_count, 0);
+      }, 0);
+
+      const totalReleases = releases.length;
+      const latestVersion = releases[0]?.tag_name || "N/A";
+      const latestReleaseDate = releases[0]?.published_at || null;
+
+      document.getElementById(`${repoKey}TotalDownloads`).textContent = totalDownloads.toLocaleString();
+      document.getElementById(`${repoKey}TotalReleases`).textContent = totalReleases;
+      document.getElementById(`${repoKey}LatestVersion`).textContent = latestVersion;
+
+      leaderboardData[repoKey] = {
+        totalDownloads: totalDownloads,
+        totalReleases: totalReleases,
+        latestVersion: latestVersion,
+        latestReleaseDate: latestReleaseDate
+      };
+      updateLeaderboard();
+
+      createPopularityChart(repoKey, releases);
+
+      statsOverview.style.display = "grid";
+      loading.style.display = "none";
+
+      for (const [index, release] of releases.entries()) {
+        const version = release.tag_name;
+        const assets = release.assets;
+        const publishedDate = new Date(release.published_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        const totalReleaseDownloads = assets.reduce((sum, asset) => sum + asset.download_count, 0);
+
+        const block = document.createElement("div");
+        block.className = "version-block fade-in";
+        block.style.animationDelay = `${index * 0.1}s`;
+
+        block.innerHTML = `
+          <div class="version-header">
+            <h2 class="version-title">${version}</h2>
+            <div class="version-date">${publishedDate}</div>
+          </div>
+          <div class="version-info">
+            <div class="total-downloads">${totalReleaseDownloads.toLocaleString()}</div>
+          </div>
+        `;
+
+        container.appendChild(block);
+      }
+    }
+
+    async function loadAllReposForLeaderboard() {
+      const promises = Object.keys(repos).map(async (repoKey) => {
+        const repoInfo = repos[repoKey];
+        const repo = repoInfo.repo;
+        const releases = await fetchJSON(`https://api.github.com/repos/${repo}/releases`);
+        
+        if (releases) {
+          const totalDownloads = releases.reduce((total, release) => {
+            return total + release.assets.reduce((sum, asset) => sum + asset.download_count, 0);
+          }, 0);
+          
+          const totalReleases = releases.length;
+          const latestVersion = releases[0]?.tag_name || "N/A";
+          const latestReleaseDate = releases[0]?.published_at || null;
+          
+          leaderboardData[repoKey] = {
+            totalDownloads: totalDownloads,
+            totalReleases: totalReleases,
+            latestVersion: latestVersion,
+            latestReleaseDate: latestReleaseDate
+          };
+        }
+      });
+      
+      await Promise.all(promises);
+      updateLeaderboard();
+    }
+
+    function initializePage() {
+      const initialTab = getTabFromURL();
+      if (initialTab !== 'home') {
+        switchTab(initialTab, false); 
+      }
+      updateBackButton();
+    }
+
+    loadAllReposForLeaderboard();
+    
+    document.addEventListener('DOMContentLoaded', initializePage);
+    
+    if (document.readyState !== 'loading') {
+      initializePage();
+    } else {
+      document.addEventListener('DOMContentLoaded', initializePage);
+    }
+  </script>
+</body>
+</html>
