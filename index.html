@@ -35,6 +35,90 @@
       background-attachment: fixed;
     }
 
+    .rate-limit-alert {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      pointer-events: none;
+    }
+
+    .rate-limit-alert.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all; 
+    }
+
+    .rate-limit-alert-content {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 100px rgba(59, 130, 246, 0.2);
+      animation: alertPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transform: scale(0.9);
+    }
+
+    @keyframes alertPop {
+      0% { transform: scale(0.9); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    .rate-limit-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .rate-limit-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #f8fafc;
+      line-height: 1.3;
+    }
+
+    .rate-limit-message {
+      font-size: 1.1rem;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .rate-limit-button {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .rate-limit-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+    }
+
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -398,6 +482,28 @@
       border-color: rgba(59, 130, 246, 0.3);
       box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
     }
+    
+    .overview-card.clickable {
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .overview-card.clickable:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(59, 130, 246, 0.05);
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .overview-card.clickable:hover:after {
+      opacity: 1;
+    }
 
     .overview-icon {
       font-size: 2.5rem;
@@ -446,13 +552,28 @@
     .activity-item {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 1rem;
-      padding: 1rem 0;
-      border-bottom: 1px solid rgba(51, 65, 85, 0.2);
+      padding: 1rem 1.5rem;
+      margin: 0.5rem 0;
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 12px;
+      background: rgba(30, 41, 59, 0.6);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
     }
 
-    .activity-item:last-child {
-      border-bottom: none;
+    .activity-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 8px;
+      padding: 1.2rem 2rem;
+      margin-left: -0.5rem;
+      margin-right: -0.5rem;
+      width: calc(100% + 1rem);
     }
 
     .activity-icon {
@@ -468,17 +589,24 @@
 
     .activity-content {
       flex: 1;
+      margin-right: 1rem;
     }
 
     .activity-title {
       font-weight: 600;
       color: #f8fafc;
       margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .activity-desc {
       font-size: 0.85rem;
       color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .activity-time {
@@ -487,6 +615,9 @@
       background: rgba(51, 65, 85, 0.5);
       padding: 0.25rem 0.5rem;
       border-radius: 6px;
+      white-space: nowrap;
+      min-width: 70px;
+      text-align: center;
     }
 
     .activity-loading {
@@ -633,6 +764,21 @@
       font-style: italic;
     }
 
+    .clickable {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .clickable:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+    }
+    
+    .overview-number.clickable:hover {
+      color: #60a5fa;
+      text-decoration: underline;
+    }
+    
     @media (max-width: 768px) {
       .container {
         padding: 1rem;
@@ -708,7 +854,19 @@
 
       .activity-item {
         gap: 0.75rem;
-        padding: 0.75rem 0;
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+      }
+      
+      .activity-item:hover {
+        padding: 1rem 1.25rem;
+        margin-left: -0.25rem;
+        margin-right: -0.25rem;
+        width: calc(100% + 0.5rem);
+      }
+      
+      .activity-time {
+        margin-top: 0.5rem;
       }
     }
   </style>
@@ -745,7 +903,7 @@
       <div class="overview-section">
         <h2 class="section-title">📊 Global Overview</h2>
         <div class="overview-grid">
-          <div class="overview-card">
+          <div class="overview-card clickable" id="mostActiveCard" title="Click to view details">
             <div class="overview-icon">🚀</div>
             <div class="overview-content">
               <h3>Most Active</h3>
@@ -753,7 +911,7 @@
               <p class="overview-desc">Project with most releases</p>
             </div>
           </div>
-          <div class="overview-card">
+          <div class="overview-card clickable" id="topPerformerCard" title="Click to view details">
             <div class="overview-icon">⭐</div>
             <div class="overview-content">
               <h3>Top Performer</h3>
@@ -761,7 +919,7 @@
               <p class="overview-desc">Highest download count</p>
             </div>
           </div>
-          <div class="overview-card">
+          <div class="overview-card clickable" id="latestReleaseCard" title="Click to view details">
             <div class="overview-icon">📅</div>
             <div class="overview-content">
               <h3>Latest Release</h3>
@@ -880,38 +1038,6 @@
       </div>
       
       <div id="cometContainer"></div>
-    </div>
-
-    <div class="tab-content" id="nocturnal-tab">
-      <h1>Nocturnal Analytics</h1>
-      <div class="stats-overview" id="nocturnalStatsOverview" style="display: none;">
-        <div class="stat-card">
-          <div class="stat-number" id="nocturnalTotalDownloads">-</div>
-          <div class="stat-label">Total Downloads</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="nocturnalTotalReleases">-</div>
-          <div class="stat-label">Total Releases</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="nocturnalLatestVersion">-</div>
-          <div class="stat-label">Latest Version</div>
-        </div>
-      </div>
-      
-      <div class="chart-container" id="nocturnalChartContainer" style="display: none;">
-        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
-        <div class="chart-wrapper">
-          <canvas id="nocturnalChart"></canvas>
-        </div>
-      </div>
-      
-      <div class="loading" id="nocturnalLoading">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Loading Nocturnal release data...</div>
-      </div>
-      
-      <div id="nocturnalContainer"></div>
     </div>
 
     <div class="tab-content" id="rustrogen-tab">
@@ -1041,6 +1167,51 @@
       
       <div id="novaContainer"></div>
     </div>
+
+    <div class="tab-content" id="seven-tab">
+      <h1>Seven Analytics</h1>
+      <div class="stats-overview" id="sevenStatsOverview" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-number" id="sevenTotalDownloads">-</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="sevenTotalReleases">-</div>
+          <div class="stat-label">Total Releases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="sevenLatestVersion">-</div>
+          <div class="stat-label">Latest Version</div>
+        </div>
+      </div>
+      
+      <div class="chart-container" id="sevenChartContainer" style="display: none;">
+        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="sevenChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="loading" id="sevenLoading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Seven release data...</div>
+      </div>
+      
+      <div id="sevenContainer"></div>
+    </div>
+  </div>
+
+  <!-- GitHub Rate Limit Alert -->
+  <div class="rate-limit-alert" id="rateLimitAlert">
+    <div class="rate-limit-alert-content">
+      <div class="rate-limit-icon">⚠</div>
+      <h2 class="rate-limit-title">GitHub API Rate Limit Reached</h2>
+      <p class="rate-limit-message">
+        You've reached GitHub's API rate limit. GitHub limits the number of API requests to prevent abuse.
+        Please check back in a few minutes when the rate limit resets.
+      </p>
+      <button class="rate-limit-button" onclick="location.reload()">Reload</button>
+    </div>
   </div>
 
   <script>
@@ -1048,11 +1219,11 @@
       nitrogen: { name: "Nitrogen", repo: "jadxv/nitrogen" },
       tritium: { name: "Tritium", repo: "phantom8015/Tritium" },
       comet: { name: "Comet", repo: "FrozenProductions/Comet" },
-      nocturnal: { name: "Nocturnal", repo: "sillyconvicted/nocturnalui" },
       rustrogen: { name: "Rustrogen", repo: "Bisher-Almasri/rustrogen" },
       prism: { name: "Prism", repo: "Bisher-Almasri/prism" },
       "7sploit": { name: "7Sploit", repo: "OutlawedDev/7sploit" },
-      nova: { name: "Nova", repo: "OutlawedDev/NovaUI12" }
+      nova: { name: "Nova", repo: "OutlawedDev/NovaUI12" },
+      seven: { name: "Seven", repo: "Phantom8015/Seven" }
     };
     
     let currentTab = 'home';
@@ -1062,6 +1233,8 @@
       totalReleases: 0,
       activeProjects: 0
     };
+    
+    let releasesCache = {};
 
     function updateURL(tab) {
       if (tab === 'home') {
@@ -1094,13 +1267,62 @@
       switchTab(tab, false);
     });
 
-    async function fetchJSON(url) {
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.error("Failed to fetch:", url);
-        return null;
+    function showRateLimitAlert() {
+      console.log("Showing rate limit alert modal");
+      const alertEl = document.getElementById('rateLimitAlert');
+      alertEl.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    async function fetchJSON(url, retryCount = 1) {
+      try {
+        const response = await fetch(url);
+        
+        console.log(`Fetch response for ${url}: status=${response.status}`);
+        
+        if (response.status === 403 || response.status === 429) {
+          console.error(`GitHub API rate limit reached - status: ${response.status}`);
+          showRateLimitAlert();
+          return { error: 'rateLimit', status: response.status };
+        }
+        
+        if (!response.ok) {
+          console.error(`Failed to fetch (${response.status}): ${url}`);
+          
+          if (retryCount > 0) {
+            console.log(`Retrying... (${retryCount} attempt(s) left)`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * (3 - retryCount)));
+            return fetchJSON(url, retryCount - 1);
+          }
+          
+          return { error: 'apiError', status: response.status };
+        }
+        
+        try {
+          const jsonData = await response.json();
+          return jsonData;
+        } catch (parseError) {
+          console.error("Error parsing JSON:", parseError);
+          
+          if (retryCount > 0) {
+            console.log(`Retrying after JSON parse error... (${retryCount} attempt(s) left)`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * (3 - retryCount)));
+            return fetchJSON(url, retryCount - 1);
+          }
+          
+          return { error: 'parseError', message: parseError.message };
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+        
+        if (retryCount > 0) {
+          console.log(`Retrying after network error... (${retryCount} attempt(s) left)`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * (3 - retryCount)));
+          return fetchJSON(url, retryCount - 1);
+        }
+        
+        return { error: 'networkError', message: error.message };
       }
-      return await response.json();
     }
 
     function updateGlobalStats() {
@@ -1114,13 +1336,23 @@
       const mostActive = Object.entries(leaderboardData)
         .sort((a, b) => b[1].totalReleases - a[1].totalReleases)[0];
       if (mostActive) {
-        document.getElementById('mostActiveProject').textContent = repos[mostActive[0]]?.name || mostActive[0];
+        const mostActiveElement = document.getElementById('mostActiveProject');
+        const mostActiveCard = document.getElementById('mostActiveCard');
+        mostActiveElement.textContent = repos[mostActive[0]]?.name || mostActive[0];
+        mostActiveCard.title = `Click to view ${repos[mostActive[0]]?.name} details`;
+        mostActiveCard.onclick = () => switchTab(mostActive[0]);
+        mostActiveCard.style.cursor = 'pointer';
       }
       
       const topPerformer = Object.entries(leaderboardData)
         .sort((a, b) => b[1].totalDownloads - a[1].totalDownloads)[0];
       if (topPerformer) {
-        document.getElementById('topPerformer').textContent = repos[topPerformer[0]]?.name || topPerformer[0];
+        const topPerformerElement = document.getElementById('topPerformer');
+        const topPerformerCard = document.getElementById('topPerformerCard');
+        topPerformerElement.textContent = repos[topPerformer[0]]?.name || topPerformer[0];
+        topPerformerCard.title = `Click to view ${repos[topPerformer[0]]?.name} details`;
+        topPerformerCard.onclick = () => switchTab(topPerformer[0]);
+        topPerformerCard.style.cursor = 'pointer';
       }
       
       const latestRelease = Object.entries(leaderboardData)
@@ -1128,7 +1360,12 @@
         .sort((a, b) => new Date(b[1].latestReleaseDate) - new Date(a[1].latestReleaseDate))[0];
       if (latestRelease) {
         const projectName = repos[latestRelease[0]]?.name || latestRelease[0];
-        document.getElementById('latestRelease').textContent = projectName;
+        const latestReleaseElement = document.getElementById('latestRelease');
+        const latestReleaseCard = document.getElementById('latestReleaseCard');
+        latestReleaseElement.textContent = projectName;
+        latestReleaseCard.title = `Click to view ${projectName} details`;
+        latestReleaseCard.onclick = () => switchTab(latestRelease[0]);
+        latestReleaseCard.style.cursor = 'pointer';
       }
     }
 
@@ -1136,7 +1373,6 @@
       const activities = Object.entries(leaderboardData)
         .filter(([_, data]) => data.latestReleaseDate)
         .sort((a, b) => new Date(b[1].latestReleaseDate) - new Date(a[1].latestReleaseDate))
-        .slice(0, 5);
       
       const activityContainer = document.getElementById('recentActivity');
       
@@ -1150,7 +1386,7 @@
         const timeAgo = getTimeAgo(new Date(data.latestReleaseDate));
         
         return `
-          <div class="activity-item fade-in" style="animation-delay: ${index * 0.1}s;">
+          <div class="activity-item fade-in clickable" style="animation-delay: ${index * 0.1}s;" onclick="switchTab('${repoKey}')" title="Click to view ${repoInfo.name} details">
             <div class="activity-icon">🚀</div>
             <div class="activity-content">
               <div class="activity-title">${repoInfo.name} released ${data.latestVersion}</div>
@@ -1217,22 +1453,8 @@
       }
       updateBackButton();
       
-      if (tab === 'nitrogen' && !document.getElementById('nitrogenContainer').hasChildNodes()) {
-        loadReleases('nitrogen');
-      } else if (tab === 'tritium' && !document.getElementById('tritiumContainer').hasChildNodes()) {
-        loadReleases('tritium');
-      } else if (tab === 'comet' && !document.getElementById('cometContainer').hasChildNodes()) {
-        loadReleases('comet');
-      } else if (tab === 'nocturnal' && !document.getElementById('nocturnalContainer').hasChildNodes()) {
-        loadReleases('nocturnal');
-      } else if (tab === 'rustrogen' && !document.getElementById('rustrogenContainer').hasChildNodes()) {
-        loadReleases('rustrogen');
-      } else if (tab === 'prism' && !document.getElementById('prismContainer').hasChildNodes()) {
-        loadReleases('prism');
-      } else if (tab === '7sploit' && !document.getElementById('7sploitContainer').hasChildNodes()) {
-        loadReleases('7sploit');
-      } else if (tab === 'nova' && !document.getElementById('novaContainer').hasChildNodes()) {
-        loadReleases('nova');
+      if (tab in repos && !document.getElementById(`${tab}Container`).hasChildNodes()) {
+        loadReleases(tab);
       }
     }
 
@@ -1241,6 +1463,11 @@
       const canvas = document.getElementById(`${repoKey}Chart`);
       
       if (!canvas || !releases || releases.length === 0) {
+        return;
+      }
+      
+      if (releases.length <= 1) {
+        console.log(`Skipping chart for ${repoKey} - only has ${releases.length} release(s)`);
         return;
       }
 
@@ -1382,7 +1609,6 @@
         }
       });
 
-      chartContainer.style.display = 'block';
       return chart;
     }
 
@@ -1392,46 +1618,44 @@
       const container = document.getElementById(`${repoKey}Container`);
       const loading = document.getElementById(`${repoKey}Loading`);
       const statsOverview = document.getElementById(`${repoKey}StatsOverview`);
+      const chartContainer = document.getElementById(`${repoKey}ChartContainer`);
 
-      const releases = await fetchJSON(`https://api.github.com/repos/${repo}/releases`);
-      if (!releases) {
-        loading.innerHTML = `
-          <div class="error-message">
-            <h3>Failed to load release data</h3>
-            <p>Unable to fetch data from GitHub API. Please try again later.</p>
-          </div>
-        `;
-        return;
+      let releases;
+      
+      if (releasesCache[repoKey]) {
+        releases = releasesCache[repoKey];
+      } else {
+        const result = await fetchJSON(`https://api.github.com/repos/${repo}/releases`, 1);
+        
+        if (result && result.error) {
+          showRateLimitAlert();
+          
+        }
+        
+        releases = result;
+        releasesCache[repoKey] = releases;
       }
 
-      releases.sort((a, b) => {
-        return new Date(b.published_at) - new Date(a.published_at);
-      });
-
-      const totalDownloads = releases.reduce((total, release) => {
-        return total + release.assets.reduce((sum, asset) => sum + asset.download_count, 0);
-      }, 0);
-
-      const totalReleases = releases.length;
-      const latestVersion = releases[0]?.tag_name || "N/A";
-      const latestReleaseDate = releases[0]?.published_at || null;
-
-      document.getElementById(`${repoKey}TotalDownloads`).textContent = totalDownloads.toLocaleString();
-      document.getElementById(`${repoKey}TotalReleases`).textContent = totalReleases;
-      document.getElementById(`${repoKey}LatestVersion`).textContent = latestVersion;
-
-      leaderboardData[repoKey] = {
-        totalDownloads: totalDownloads,
-        totalReleases: totalReleases,
-        latestVersion: latestVersion,
-        latestReleaseDate: latestReleaseDate
-      };
-      updateLeaderboard();
-
-      createPopularityChart(repoKey, releases);
+      if (releases.length <= 1) {
+        const singleReleaseMessage = document.createElement("div");
+        singleReleaseMessage.className = "chart-container fade-in";
+        singleReleaseMessage.style.textAlign = "center";
+        singleReleaseMessage.innerHTML = `
+          <h3 class="chart-title">📊 Release Information</h3>
+          <p style="color: #94a3b8; font-size: 1.1rem; padding: 2rem;">
+            ${repoInfo.name} currently has only one release. Charts will be available when more releases are published.
+          </p>
+        `;
+        container.insertBefore(singleReleaseMessage, container.firstChild);
+      } else {
+        createPopularityChart(repoKey, releases);
+        chartContainer.style.display = "block";
+      }
 
       statsOverview.style.display = "grid";
       loading.style.display = "none";
+      
+      releases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
 
       for (const [index, release] of releases.entries()) {
         const version = release.tag_name;
@@ -1445,8 +1669,10 @@
         const totalReleaseDownloads = assets.reduce((sum, asset) => sum + asset.download_count, 0);
 
         const block = document.createElement("div");
-        block.className = "version-block fade-in";
+        block.className = "version-block fade-in clickable";
         block.style.animationDelay = `${index * 0.1}s`;
+        block.title = `View ${repoInfo.name} ${version} details`;
+        block.onclick = () => switchTab(repoKey);
 
         block.innerHTML = `
           <div class="version-header">
@@ -1466,9 +1692,16 @@
       const promises = Object.keys(repos).map(async (repoKey) => {
         const repoInfo = repos[repoKey];
         const repo = repoInfo.repo;
-        const releases = await fetchJSON(`https://api.github.com/repos/${repo}/releases`);
         
-        if (releases) {
+        const result = await fetchJSON(`https://api.github.com/repos/${repo}/releases`, 1);
+        
+        console.log(`Processing result for ${repoKey}:`, result && result.error ? result.error : 'success');
+        
+        if (result && !result.error) {
+          const releases = result;
+          
+          releasesCache[repoKey] = releases;
+          
           const totalDownloads = releases.reduce((total, release) => {
             return total + release.assets.reduce((sum, asset) => sum + asset.download_count, 0);
           }, 0);
@@ -1483,24 +1716,42 @@
             latestVersion: latestVersion,
             latestReleaseDate: latestReleaseDate
           };
+          
+          document.getElementById(`${repoKey}TotalDownloads`).textContent = totalDownloads.toLocaleString();
+          document.getElementById(`${repoKey}TotalReleases`).textContent = totalReleases;
+          document.getElementById(`${repoKey}LatestVersion`).textContent = latestVersion;
+        } else if (result && result.error) {
+          console.log(`Error loading ${repoKey}: ${result.error}`);
         }
       });
       
-      await Promise.all(promises);
-      updateLeaderboard();
+      try {
+        await Promise.all(promises);
+        updateLeaderboard();
+        console.log('All repository data preloaded');
+      } catch (error) {
+        console.error("Error loading repository data:", error);
+        updateLeaderboard();
+      }
     }
 
-    function initializePage() {
+    async function initializePage() {
+      const rateLimitAlert = document.getElementById('rateLimitAlert');
+      if (rateLimitAlert) {
+        rateLimitAlert.classList.remove('active');
+        console.log("Rate limit alert initialized and hidden");
+      }
+      
+      console.log("Starting to load repository data");
+      await loadAllReposForLeaderboard();
+      console.log("Finished loading repository data");
+      
       const initialTab = getTabFromURL();
       if (initialTab !== 'home') {
         switchTab(initialTab, false); 
       }
       updateBackButton();
     }
-
-    loadAllReposForLeaderboard();
-    
-    document.addEventListener('DOMContentLoaded', initializePage);
     
     if (document.readyState !== 'loading') {
       initializePage();
