@@ -687,6 +687,59 @@
       border-radius: 12px;
     }
 
+    .leaderboard-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .github-button {
+      background: rgba(51, 65, 85, 0.8);
+      border: 1px solid rgba(51, 65, 85, 0.5);
+      border-radius: 8px;
+      padding: 0.5rem;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      min-width: 40px;
+      height: 40px;
+    }
+
+    .github-button:hover {
+      background: rgba(51, 65, 85, 1);
+      border-color: rgba(94, 234, 212, 0.5);
+      color: #94f3e4;
+      transform: scale(1.05);
+    }
+
+    .github-button-large {
+      background: linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(30, 41, 59, 0.9) 100%);
+      border: 1px solid rgba(51, 65, 85, 0.3);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      color: #f8fafc;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .github-button-large:hover {
+      background: linear-gradient(135deg, rgba(51, 65, 85, 1) 0%, rgba(30, 41, 59, 1) 100%);
+      border-color: rgba(94, 234, 212, 0.5);
+      color: #94f3e4;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
     .leaderboard-loading {
       text-align: center;
       color: #94a3b8;
@@ -885,8 +938,8 @@
           <p class="hero-description">Your comprehensive analytics dashboard for tracking download statistics across all UI development projects. Monitor performance, analyze trends, and celebrate milestones.</p>
           <div class="hero-stats">
             <div class="hero-stat-item">
-              <div class="hero-stat-number" id="totalProjects">8</div>
-              <div class="hero-stat-label">Active Projects</div>
+              <div class="hero-stat-number" id="totalProjects">7</div>
+              <div class="hero-stat-label">Projects</div>
             </div>
             <div class="hero-stat-item">
               <div class="hero-stat-number" id="globalTotalDownloads">-</div>
@@ -931,14 +984,14 @@
       </div>
 
       <div class="leaderboard-section">
-        <h2 class="section-title">Active Projects</h2>
+        <h2 class="section-title">Projects</h2>
         <div id="leaderboard">
           <div class="leaderboard-loading">Loading leaderboard data...</div>
         </div>
       </div>
 
       <div class="activity-section">
-        <h2 class="section-title">🔄 Recent Activity</h2>
+        <h2 class="section-title">Latest updates of UI's</h2>
         <div class="activity-timeline" id="recentActivity">
           <div class="activity-loading">Loading recent activity...</div>
         </div>
@@ -946,6 +999,13 @@
     </div>
     
     <div class="tab-content" id="nitrogen-tab">
+      <h1>Nitrogen Analytics</h1>
+      <a href="https://github.com/jadxv/nitrogen" target="_blank" rel="noopener noreferrer" class="github-button-large">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View Nitrogen on GitHub
+      </a>
       <div class="stats-overview" id="nitrogenStatsOverview" style="display: none;">
         <div class="stat-card">
           <div class="stat-number" id="nitrogenTotalDownloads">-</div>
@@ -978,6 +1038,12 @@
 
     <div class="tab-content" id="tritium-tab">
       <h1>Tritium Analytics</h1>
+      <a href="https://github.com/phantom8015/Tritium" target="_blank" rel="noopener noreferrer" class="github-button-large">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View Tritium on GitHub
+      </a>
       <div class="stats-overview" id="tritiumStatsOverview" style="display: none;">
         <div class="stat-card">
           <div class="stat-number" id="tritiumTotalDownloads">-</div>
@@ -1010,6 +1076,12 @@
 
     <div class="tab-content" id="comet-tab">
       <h1>Comet Analytics</h1>
+      <a href="https://github.com/FrozenProductions/Comet" target="_blank" rel="noopener noreferrer" class="github-button-large">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View Comet on GitHub
+      </a>
       <div class="stats-overview" id="cometStatsOverview" style="display: none;">
         <div class="stat-card">
           <div class="stat-number" id="cometTotalDownloads">-</div>
@@ -1042,6 +1114,12 @@
 
     <div class="tab-content" id="rustrogen-tab">
       <h1>Rustrogen Analytics</h1>
+      <a href="https://github.com/Bisher-Almasri/rustrogen" target="_blank" rel="noopener noreferrer" class="github-button-large">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View Rustrogen on GitHub
+      </a>
       <div class="stats-overview" id="rustrogenStatsOverview" style="display: none;">
         <div class="stat-card">
           <div class="stat-number" id="rustrogenTotalDownloads">-</div>
@@ -1074,6 +1152,12 @@
 
     <div class="tab-content" id="prism-tab">
       <h1>Prism Analytics</h1>
+      <a href="https://github.com/Bisher-Almasri/prism" target="_blank" rel="noopener noreferrer" class="github-button-large">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View Prism on GitHub
+      </a>
       <div class="stats-overview" id="prismStatsOverview" style="display: none;">
         <div class="stat-card">
           <div class="stat-number" id="prismTotalDownloads">-</div>
@@ -1106,6 +1190,12 @@
 
     <div class="tab-content" id="7sploit-tab">
       <h1>7Sploit Analytics</h1>
+      <a href="https://github.com/OutlawedDev/7sploit" target="_blank" rel="noopener noreferrer" class="github-button-large">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View 7Sploit on GitHub
+      </a>
       <div class="stats-overview" id="7sploitStatsOverview" style="display: none;">
         <div class="stat-card">
           <div class="stat-number" id="7sploitTotalDownloads">-</div>
@@ -1138,6 +1228,12 @@
 
     <div class="tab-content" id="nova-tab">
       <h1>Nova Analytics</h1>
+      <a href="https://github.com/OutlawedDev/NovaUI12" target="_blank" rel="noopener noreferrer" class="github-button-large">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View Nova on GitHub
+      </a>
       <div class="stats-overview" id="novaStatsOverview" style="display: none;">
         <div class="stat-card">
           <div class="stat-number" id="novaTotalDownloads">-</div>
@@ -1167,38 +1263,6 @@
       
       <div id="novaContainer"></div>
     </div>
-
-    <div class="tab-content" id="seven-tab">
-      <h1>Seven Analytics</h1>
-      <div class="stats-overview" id="sevenStatsOverview" style="display: none;">
-        <div class="stat-card">
-          <div class="stat-number" id="sevenTotalDownloads">-</div>
-          <div class="stat-label">Total Downloads</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="sevenTotalReleases">-</div>
-          <div class="stat-label">Total Releases</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="sevenLatestVersion">-</div>
-          <div class="stat-label">Latest Version</div>
-        </div>
-      </div>
-      
-      <div class="chart-container" id="sevenChartContainer" style="display: none;">
-        <h3 class="chart-title">📊 Cumulative Downloads Over Time</h3>
-        <div class="chart-wrapper">
-          <canvas id="sevenChart"></canvas>
-        </div>
-      </div>
-      
-      <div class="loading" id="sevenLoading">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Loading Seven release data...</div>
-      </div>
-      
-      <div id="sevenContainer"></div>
-    </div>
   </div>
 
   <!-- GitHub Rate Limit Alert -->
@@ -1222,8 +1286,7 @@
       rustrogen: { name: "Rustrogen", repo: "Bisher-Almasri/rustrogen" },
       prism: { name: "Prism", repo: "Bisher-Almasri/prism" },
       "7sploit": { name: "7Sploit", repo: "OutlawedDev/7sploit" },
-      nova: { name: "Nova", repo: "OutlawedDev/NovaUI12" },
-      seven: { name: "Seven", repo: "Phantom8015/Seven" }
+      nova: { name: "Nova", repo: "OutlawedDev/NovaUI12" }
     };
     
     let currentTab = 'home';
@@ -1426,14 +1489,22 @@
         const rank = index + 1;
         const rankClass = rank === 1 ? 'first' : rank === 2 ? 'second' : rank === 3 ? 'third' : '';
         const repoName = repos[repoKey]?.name || repoKey.charAt(0).toUpperCase() + repoKey.slice(1);
+        const repoUrl = `https://github.com/${repos[repoKey].repo}`;
         
         return `
-          <div class="leaderboard-item fade-in" style="animation-delay: ${index * 0.1}s; cursor: pointer;" onclick="switchTab('${repoKey}')" title="Click to view ${repoName} details">
+          <div class="leaderboard-item fade-in" style="animation-delay: ${index * 0.1}s;">
             <div class="leaderboard-rank ${rankClass}">${rank}</div>
-            <div class="leaderboard-info">
+            <div class="leaderboard-info" style="cursor: pointer;" onclick="switchTab('${repoKey}')" title="Click to view ${repoName} details">
               <div class="leaderboard-name">${repoName}</div>
             </div>
-            <div class="leaderboard-downloads">${data.totalDownloads.toLocaleString()}</div>
+            <div class="leaderboard-actions">
+              <div class="leaderboard-downloads">${data.totalDownloads.toLocaleString()}</div>
+              <a href="${repoUrl}" target="_blank" rel="noopener noreferrer" class="github-button" title="View ${repoName} on GitHub" onclick="event.stopPropagation();">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                </svg>
+              </a>
+            </div>
           </div>
         `;
       }).join('');
